@@ -10,8 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -30,8 +33,14 @@ public class NewsFragment extends Fragment {
         newsListView = view.findViewById(R.id.newsListView);
         progressBar = view.findViewById(R.id.progressBar);
         myOpener = new MyOpener(getContext());
-        newsAdapter = new NewsAdapter(getContext(), newsArticleList);
+
+        newsAdapter = new NewsAdapter();
         newsListView.setAdapter(newsAdapter);
+
+        NewsArticle article = new NewsArticle("Power Ranger", "this is the power ranger description", "", "", "");
+        newsArticleList.add(article);
+        newsAdapter.notifyDataSetChanged();
+
         new NewsList().execute();
         // Inflate the layout for this fragment
         return view;
@@ -62,11 +71,11 @@ public class NewsFragment extends Fragment {
     private class NewsAdapter extends BaseAdapter{
         @Override
         public int getCount() {
-            return 0;
+            return newsArticleList.size();
         }
         @Override
         public Object getItem(int position) {
-            return null;
+            return newsArticleList.get(position);
         }
         @Override
         public long getItemId(int position) {
@@ -75,7 +84,17 @@ public class NewsFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            return null;
+            if (convertView == null) {
+                convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_news, parent, false);
+            }
+            NewsArticle newsArticle = (NewsArticle) getItem(position);
+
+            TextView titleView = convertView.findViewById(R.id.title_textView);
+            ImageView imageView = convertView.findViewById(R.id.news_ImageView);
+            ImageButton button = convertView.findViewById(R.id.saveButton);
+
+            titleView.setText(newsArticle.getTitle());
+            return convertView;
         }
     }
 }
