@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +17,22 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class NewsFragment extends Fragment {
 
     private ListView newsListView;
     private ProgressBar progressBar;
-    private ArrayList<NewsArticle> newsArticleList = new ArrayList<>();
+    private List<NewsArticle> newsArticleList = new ArrayList<>();
     private NewsAdapter newsAdapter;
     MyOpener myOpener;
     SQLiteDatabase db;
@@ -42,19 +52,77 @@ public class NewsFragment extends Fragment {
         newsAdapter.notifyDataSetChanged();
 
         new NewsList().execute();
+
+        //click for items in the list
+        newsListView.setOnItemClickListener( (parent, itemView, position, id) -> {
+
+        });
         // Inflate the layout for this fragment
         return view;
     }
 
-    private class NewsList extends AsyncTask<String, Integer, String>{
+    private class NewsList extends AsyncTask<String, Integer, List<NewsArticle>>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            newsListView.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
         }
 
         @Override
-        protected String doInBackground(String... strings) {
-            return null;
+        protected List<NewsArticle> doInBackground(String... strings) {
+            List<NewsArticle> articles = new ArrayList<>();
+            try {
+                URL url = new URL("https://feeds.bbci.co.uk/news/world/us_and_canada/rss.xml");
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("GET");
+                urlConnection.connect();
+                InputStream response = urlConnection.getInputStream();
+                Log.d("AsyncResponse", "doInBackground: " + response);
+
+                //response is XML so we use XMLpullparser
+                XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+                factory.setNamespaceAware(false);
+                XmlPullParser parser = factory.newPullParser();
+                parser.setInput(response, "UTF-8");
+
+                int eventType = parser.getEventType();
+                NewsArticle currentArticle = null;
+                while (eventType != XmlPullParser.END_DOCUMENT) {
+                    String tagName = parser.getName();
+                    switch (eventType) {
+                        case XmlPullParser.START_TAG:
+                            if (tagName.equalsIgnoreCase("item")) {
+                                currentArticle = new NewsArticle();
+                            } else if (currentArticle != null) {
+                                if (tagName.equalsIgnoreCase("title")) {
+                                    currentArticle.setTitle(parser.nextText());
+                                } else if (tagName.equalsIgnoreCase("description")) {
+                                    currentArticle.setDescription(parser.nextText());
+                                } else if (tagName.equalsIgnoreCase("link")) {
+                                    currentArticle.setLink(parser.nextText());
+                                } else if (tagName.equalsIgnoreCase("pubDate")) {
+                                    currentArticle.setPubDate(parser.nextText());
+                                } else if (tagName.equalsIgnoreCase("media:thumbnail")) {
+                                    currentArticle.setThumbnail(parser.getAttributeValue(null, "url"));
+                                }
+                            }
+                            break;
+
+                        case XmlPullParser.END_TAG:
+                            if (tagName.equalsIgnoreCase("item") && currentArticle != null) {
+                                articles.add(currentArticle);
+                            }
+                            break;
+                    }
+                    eventType = parser.next();
+                }
+                response.close();
+                urlConnection.disconnect();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return articles;
         }
 
         @Override
@@ -63,8 +131,13 @@ public class NewsFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
+        protected void onPostExecute(List<NewsArticle> articles) {
+            super.onPostExecute(articles);
+            newsArticleList.clear();
+            newsArticleList.addAll(articles);
+            newsAdapter.notifyDataSetChanged();
+            progressBar.setVisibility(View.GONE);
+            newsListView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -94,6 +167,15 @@ public class NewsFragment extends Fragment {
             ImageButton button = convertView.findViewById(R.id.saveButton);
 
             titleView.setText(newsArticle.getTitle());
+            if (newsArticle.getThumbnail() != null && !newsArticle.getThumbnail().isEmpty()) {
+                Picasso.get()
+                        .load(newsArticle.getThumbnail())
+                        .placeholder(R.drawable.ic_launcher_background) // Optional placeholder image
+                        .error(R.drawable.ic_launcher_background) // Optional error image
+                        .into(imageView);
+            } else {
+                imageView.setImageResource(R.drawable.ic_launcher_background); // Set a default image if thumbnail is missing
+            }
             return convertView;
         }
     }

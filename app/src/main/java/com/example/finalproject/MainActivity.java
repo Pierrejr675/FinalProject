@@ -23,7 +23,6 @@ import com.google.android.material.navigation.NavigationView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
-    SQLiteDatabase db;
     ImageButton newsButton;
     ImageButton savedButton;
     ImageButton settingsButton;
@@ -51,6 +50,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         newsButton.setOnClickListener(this::handleButtonToggle);
         savedButton.setOnClickListener(this::handleButtonToggle);
         settingsButton.setOnClickListener(this::handleButtonToggle);
+
+//        MyOpener opener = new MyOpener(this);
+//        long newUserId = opener.addUser("Jasmin Martel", "jasminouatr@gmail.com", "12345", 22);
+//        if (newUserId == -1) {
+//            Toast.makeText(this, "Error adding user", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(this, "User added successfully! ID: " + newUserId, Toast.LENGTH_SHORT).show();
+//        }
     }
 
     private void handleButtonToggle(View clickedButton){
