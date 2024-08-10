@@ -1,5 +1,6 @@
 package com.example.finalproject;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -9,7 +10,7 @@ import androidx.annotation.Nullable;
 public class MyOpener extends SQLiteOpenHelper {
 
     protected final static String DATABASE_NAME = "BBCNewsReader";
-    protected final static int VERSION_NUM = 1;
+    protected final static int VERSION_NUM = 2;
     public final static String TABLE_USER = "USER";
     public final static String COL_NAME = "NAME";
     public final static String COL_EMAIL = "EMAIL";
@@ -17,6 +18,8 @@ public class MyOpener extends SQLiteOpenHelper {
     public final static String COL_AGE = "AGE";
     public final static String COL_SAVED_NEWS = "SAVED_NEWS";
     public final static String COL_ID = "_id";
+
+    SQLiteDatabase db;
 
     public MyOpener(@Nullable Context context) {
         super(context, DATABASE_NAME, null, VERSION_NUM);
@@ -43,5 +46,37 @@ public class MyOpener extends SQLiteOpenHelper {
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
+    }
+
+    public void open() {
+        if (db == null || !db.isOpen()) {
+            db = this.getWritableDatabase();
+        }
+    }
+
+    public void close() {
+        if (db != null && db.isOpen()) {
+            db.close();
+        }
+    }
+
+    public long addUser(String name, String email, String mdp, int age) {
+        open();
+        ContentValues values = new ContentValues();
+        values.put(COL_NAME, name);
+        values.put(COL_EMAIL, email);
+        values.put(COL_MDP, mdp);
+        values.put(COL_AGE, age);
+
+        return db.insert(TABLE_USER, null, values);
+    }
+
+    public void deleteUsers() {
+        open();
+        db.delete(TABLE_USER, null, null);
+    }
+    public void deleteUser(long id) {
+        open();
+        db.delete(TABLE_USER, COL_ID + " = ?", new String[]{String.valueOf(id)});
     }
 }

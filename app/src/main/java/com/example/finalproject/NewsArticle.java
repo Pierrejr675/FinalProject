@@ -7,6 +7,10 @@ public class NewsArticle {
     private String pubDate;
     private String thumbnail;
 
+    public NewsArticle() {
+
+    }
+
     public NewsArticle(String title, String description, String link, String pubDate, String thumbnail) {
         this.title = title;
         this.description = description;
