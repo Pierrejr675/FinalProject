@@ -1,6 +1,5 @@
 package com.example.finalproject;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
@@ -31,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar myToolBar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar myToolBar = (Toolbar) findViewById(R.id.details_toolbar);
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
