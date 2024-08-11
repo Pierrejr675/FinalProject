@@ -2,6 +2,7 @@ package com.example.finalproject;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -79,4 +80,15 @@ public class MyOpener extends SQLiteOpenHelper {
         open();
         db.delete(TABLE_USER, COL_ID + " = ?", new String[]{String.valueOf(id)});
     }
+
+    public boolean checkUser(String username, String mdp) {
+        open();
+        String query = "SELECT * FROM " + TABLE_USER + " WHERE " + COL_NAME + "=? AND " + COL_MDP + "=?";
+        Cursor cursor = db.rawQuery(query, new String[]{username, mdp});
+
+        boolean exists = (cursor.getCount() > 0);
+        cursor.close();
+        return exists;
+    }
+
 }
