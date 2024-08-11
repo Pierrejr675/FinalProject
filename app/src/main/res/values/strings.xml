@@ -2,6 +2,21 @@
     <string name="app_name">BBC News Reader</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="mainhelp_alertdialog_title">BBC News Reader Help</string>
+    <string name="mainhelp_alertdialog_message">This is the main page of the application, where you
+        can access other activities while having access to the menu. At the top, you can see a
+        toolbar with three buttons. The house will remove any activity on the screen, the profil
+        icon will open your user information and, of course, the question mark will open this help
+        page. You can also access this menu with its meaning with the button on the left. At the
+        bottom, each icon represent and activity. The one on the left is the current news, that you
+        can click to see more details or you can click on the save button to save it on your
+        account. the middle icon is your saved news that you can also click for more details and
+        remove them of your list if you want. The right icon is this app settings (colors, etc…).</string>
+    <string name="settings_button_topmenu">Top menu</string>
+    <string name="settings_button_bottommenu">Bottom menu</string>
+    <string name="settings_button_topmenuIcons">Top menu icons</string>
+    <string name="settings_button_bottommenuIcons">Bottom menu icons</string>
+    <string name="settings_sliderRed">Red</string>
+    <string name="settings_sliderGreen">Green</string>
+    <string name="settings_sliderBlue">Blue</string>
 </resources>
