@@ -4,6 +4,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -12,11 +13,15 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.media.RouteListingPreference;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,12 +32,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageButton newsButton;
     ImageButton savedButton;
     ImageButton settingsButton;
+    Toolbar myToolBar;
+    ConstraintLayout bottomToolBar;
+
+    private ImageButton[] topButtons;
+    private ImageButton[] bottomButtons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar myToolBar = findViewById(R.id.toolbar);
+        bottomToolBar = findViewById(R.id.framentBar_constraintLayout);
+        myToolBar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolBar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
@@ -99,6 +110,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         newsButton.setOnClickListener(this::handleButtonToggle);
         savedButton.setOnClickListener(this::handleButtonToggle);
         settingsButton.setOnClickListener(this::handleButtonToggle);
+        bottomButtons = new ImageButton[]{
+                newsButton,
+                savedButton,
+                settingsButton
+        };
     }
 
 
@@ -182,5 +198,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         drawerLayout.closeDrawer(GravityCompat.START);
         return false;
+    }
+
+    public void setTopToolbarColor(int color) {
+        myToolBar.setBackgroundColor(color);
+    }
+    public void setBottomToolbarColor(int color) {
+        bottomToolBar.setBackgroundColor(color);
+    }
+    public void setBottombarButtonColor(int color) {
+        for (ImageButton button : bottomButtons) {
+            button.setBackgroundColor(color);
+        }
+    }
+    public int getTopToolbarColor() {
+        return ((ColorDrawable) myToolBar.getBackground()).getColor();
+    }
+
+    public int getBottomToolbarColor() {
+        return ((ColorDrawable) bottomToolBar.getBackground()).getColor();
+    }
+
+    public int getButtonColor() {
+        if (bottomButtons.length > 0) {
+            return ((ColorDrawable) bottomButtons[0].getBackground()).getColor();
+        }
+        return Color.WHITE; // Default color if buttons array is empty
     }
 }
