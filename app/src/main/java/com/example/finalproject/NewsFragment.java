@@ -1,5 +1,6 @@
 package com.example.finalproject;
 
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -47,16 +48,8 @@ public class NewsFragment extends Fragment {
         newsAdapter = new NewsAdapter();
         newsListView.setAdapter(newsAdapter);
 
-        NewsArticle article = new NewsArticle("Power Ranger", "this is the power ranger description", "", "", "");
-        newsArticleList.add(article);
-        newsAdapter.notifyDataSetChanged();
-
         new NewsList().execute();
 
-        //click for items in the list
-        newsListView.setOnItemClickListener( (parent, itemView, position, id) -> {
-
-        });
         // Inflate the layout for this fragment
         return view;
     }
@@ -176,6 +169,16 @@ public class NewsFragment extends Fragment {
             } else {
                 imageView.setImageResource(R.drawable.ic_launcher_background); // Set a default image if thumbnail is missing
             }
+
+            convertView.setOnClickListener(v -> {
+                Intent intent = new Intent(getContext(), DetailsActivity.class);
+                intent.putExtra("title", newsArticle.getTitle());
+                intent.putExtra("thumbnail", newsArticle.getThumbnail());
+                intent.putExtra("description", newsArticle.getDescription());
+                intent.putExtra("pubDate", newsArticle.getPubDate());
+                intent.putExtra("link", newsArticle.getLink());
+                getContext().startActivity(intent);
+            });
             return convertView;
         }
     }
